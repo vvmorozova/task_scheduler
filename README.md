@@ -14,12 +14,16 @@ mkdir build && cd build
 
 ```
 cmake -DBUILD_EXECUTABLE=OFF ..
-make
 ```
 ## исполняемый файл
 
 ```
 cmake -DBUILD_SHARED_LIBS=OFF -DBUILD_EXECUTABLE=ON ..
+```
+
+```
 make
 ```
 # Как запустить
+
+./taskScheduler
