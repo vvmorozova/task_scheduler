@@ -11,17 +11,20 @@
 class TaskScheduler
 {
 public:
-    TaskScheduler() : finishProgram(false), currentTasksNum(0) 
+    TaskScheduler() : finishProgram(false), finishTime(time(0)), currentTasksNum(0)
     {
         thread = std::thread([this]
                              { this->runTasks(); });
     };
-    ~TaskScheduler() {
-        std::lock_guard<std::mutex> lock(mtx);
-        finishProgram = true;
+    ~TaskScheduler()
+    {
+        {
+            std::lock_guard<std::mutex> lock(mtx);
+            finishProgram = true;
+        }
         waitCondition.notify_all();
+        std::cout << "DESTRUCT" << std::endl;
         thread.join();
-
     };
     /*
     The function prototype looks like this
@@ -48,9 +51,11 @@ private:
     std::priority_queue<TaskType, std::vector<TaskType>, ComparePriorities> taskQueue;
     std::condition_variable waitCondition;
     std::mutex mtx;
-    int currentTasksNum;
+    std::mutex finishTimeMtx;
     std::thread thread;
     bool finishProgram;
+    std::time_t finishTime;
+    int currentTasksNum;
 
     void runTasks();
 };
